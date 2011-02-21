@@ -13,10 +13,16 @@ module Sinatra
     #--
     # See README.rdoc for a list of some of the people who helped me clean
     # up earlier versions of this code.
+
+   def base_path
+       BASE_PATH || request.script_name
+   end
+
+
     def url_for url_fragment, mode=:path_only
       case mode
       when :path_only
-        base = request.script_name
+        base = base_path
       when :full
         scheme = request.scheme
         if (scheme == 'http' && request.port == 80 ||
@@ -25,7 +31,7 @@ module Sinatra
         else
           port = ":#{request.port}"
         end
-        base = "#{scheme}://#{request.host}#{port}#{request.script_name}"
+        base = "#{scheme}://#{request.host}#{port}#{base_path}"
       else
         raise TypeError, "Unknown url_for mode #{mode}"
       end
